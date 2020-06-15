@@ -17,6 +17,7 @@ def check_keydown_events(event, ai_settings, screen, stats, sb, ship, aliens, bu
 		start_game(ai_settings, screen, stats, sb, ship, aliens, bullets)
 	elif event.key == pygame.K_e:
 		#End the current game
+		sb.save_high_score()
 		stats.game_active = False
 		pygame.mouse.set_visible(True)
 	elif event.key == pygame.K_q:
@@ -80,11 +81,7 @@ def start_game(ai_settings, screen, stats, sb, ship, aliens, bullets):
 	stats.game_active = True
 
 	# Reset the scoreboard images
-	sb.load_high_score()
-	sb.prep_score()
-	sb.prep_high_score()
-	sb.prep_level()
-	sb.prep_ships()
+	sb.prep_images()
 
 	#Empty the list of aliens and bullets
 	aliens.empty()
@@ -145,14 +142,19 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship,
 
 	if len(aliens) ==0:
 		# If the entire fleet is destroyed, start a new level
-		bullets.empty()
-		ai_settings.increase_speed()
+		start_new_level(ai_settings, screen, stats, sb, ship, aliens, bullets)
 
-		#Increase level
-		stats.level += 1
-		sb.prep_level()
 
-		create_fleet(ai_settings, screen, ship, aliens)
+def start_new_level(ai_settings, screen, stats, sb, ship, aliens, bullets):
+	"""Start new level"""
+	bullets.empty()
+	ai_settings.increase_speed()
+
+	#Increase level
+	stats.level += 1
+	sb.prep_level()
+
+	create_fleet(ai_settings, screen, ship, aliens)
 
 def get_number_aliens_x(ai_settings, alien_width):
 	"""Determine the number of aliens that fit in a row"""
